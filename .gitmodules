@@ -1,0 +1,6 @@
+[submodule "driver/libraries/linalg"]
+	path = driver/libraries/linalg
+	url = https://github.com/sgorsten/linalg
+[submodule "driver/libraries/openvr"]
+	path = driver/libraries/openvr
+	url = https://github.com/ValveSoftware/openvr
