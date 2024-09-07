@@ -8,8 +8,10 @@ This is by no means any viable alternative to real VR controllers.
 ### Driver itself
 Driver itself is under `./driver` where building and installation instructions are in readme.
 
-### Client
-tbd
+### Client examples
+Currently there are two C# client examples in `./examples/csharp`
+- **HmdRotation** - (windows only) simple gui to track positional data of hmd/other device
+- **IpcCmd** - even simpler cli allowing to send commands and receive responses
 
 ### Some available commands
 
