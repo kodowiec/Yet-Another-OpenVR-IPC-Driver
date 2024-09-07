@@ -39,12 +39,13 @@ namespace YetAnotherDriver {
         virtual ~VRDriver() = default;
 
     private:
-        std::string version = "0.0.1";
+        std::string version = "0.1.0";
 
         Ipc::Server ipcServer;
         std::shared_ptr<ControllerDevice> fakemove_;
         std::vector<std::shared_ptr<IVRDevice>> devices_;
         std::vector<std::shared_ptr<TrackerDevice>> trackers_;
+        std::vector<std::shared_ptr<ControllerDevice>> controllers_;
         std::vector<vr::VREvent_t> openvr_events_;
         std::chrono::milliseconds frame_timing_ = std::chrono::milliseconds(16);
         double frame_timing_avg_ = 16;

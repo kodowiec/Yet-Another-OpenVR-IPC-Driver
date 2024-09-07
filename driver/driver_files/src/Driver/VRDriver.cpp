@@ -74,6 +74,48 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     addtracker->reinit(tracker_max_saved, tracker_max_time, tracker_smoothing);
                     s = s + " added";
                 }
+                else if (word == "addcontroller")
+                {
+                    std::string name, hand;
+                    iss >> name;
+                    iss >> hand;
+                    bool isRight = hand == "RIGHT";
+
+                    auto adddevice = std::make_shared<ControllerDevice>("YAOI_"+name+"_" + (isRight? "RIGHT" : "LEFT"), isRight? ControllerDevice::Handedness::RIGHT : ControllerDevice::Handedness::LEFT);
+                    this->AddDevice(adddevice);
+                    this->controllers_.push_back(adddevice);
+                }
+                else if (word == "cfixedpose") {
+                    int idx;
+                    iss >> idx;
+
+                    if (idx < this->controllers_.size())
+                    {
+                        this->controllers_[idx]->EnableFixedPosition();
+                        this->controllers_[idx]->MakeDefaultPose();
+                        this->controllers_[idx]->Update();
+                        s = s + " updated";
+                    }
+                    else
+                    {
+                        s = s + " idinvalid";
+                    }
+                }
+                else if (word == "cdefpose")
+                {
+                    int idx;
+                    iss >> idx;
+
+                    if (idx < this->controllers_.size())
+                    {
+                        this->controllers_[idx]->MakeDefaultPose();
+                        s = s + " updated";
+                    }
+                    else
+                    {
+                        s = s + " idinvalid";
+                    }
+                }
                 else if (word == "synctime")
                 {
                     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();

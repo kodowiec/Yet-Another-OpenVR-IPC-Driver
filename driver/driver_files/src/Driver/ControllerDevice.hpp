@@ -37,6 +37,7 @@ namespace YetAnotherDriver {
             virtual void DebugRequest(const char* pchRequest, char* pchResponseBuffer, uint32_t unResponseBufferSize) override;
             virtual vr::DriverPose_t GetPose() override;
 
+            virtual vr::HmdVector3_t EnableFixedPosition();
     private:
         vr::TrackedDeviceIndex_t device_index_ = vr::k_unTrackedDeviceIndexInvalid;
         std::string serial_;
@@ -44,6 +45,8 @@ namespace YetAnotherDriver {
 
         vr::DriverPose_t last_pose_;
 
+        bool fixed_pos_ = true;
+        vr::HmdVector3_t pos_override_;
         bool did_vibrate_ = false;
         float vibrate_anim_state_ = 0.f;
 

@@ -3,10 +3,28 @@
 #include "ControllerDevice.hpp"
 #include "Key.hpp"
 
+inline vr::HmdQuaternion_t HmdQuaternion_Init( double w, double x, double y, double z )
+{
+    vr::HmdQuaternion_t quat;
+	quat.w = w;
+	quat.x = x;
+	quat.y = y;
+	quat.z = z;
+	return quat;
+}
+
 YetAnotherDriver::ControllerDevice::ControllerDevice(std::string serial, ControllerDevice::Handedness handedness):
     serial_(serial),
     handedness_(handedness)
 {
+}
+
+vr::HmdVector3_t YetAnotherDriver::ControllerDevice::EnableFixedPosition(){
+    this->fixed_pos_ = true;
+    this->pos_override_.v[0] = (this->handedness_ == Handedness::LEFT)? -0.2 : 0.2;
+    this->pos_override_.v[1] = 1.3;
+    this->pos_override_.v[2] = -0.2;
+    return this->pos_override_;
 }
 
 std::string YetAnotherDriver::ControllerDevice::GetSerial()
@@ -103,6 +121,23 @@ void YetAnotherDriver::ControllerDevice::Update()
     */
 
     // Post pose
+    if (fixed_pos_) {
+        pose.vecPosition[0] = this->pos_override_.v[0];
+        pose.vecPosition[1] = this->pos_override_.v[1];
+        pose.vecPosition[2] = this->pos_override_.v[2];
+        pose.poseTimeOffset = 0;
+        pose.poseIsValid = true;
+        pose.result = vr::TrackingResult_Running_OK;
+        pose.deviceIsConnected = true;
+
+        pose.qRotation.w = 0.105385;
+        pose.qRotation.x = 0.463532;
+        pose.qRotation.y = -0.061287;
+        pose.qRotation.z = 0.877654;
+
+        pose.qWorldFromDriverRotation = HmdQuaternion_Init(1, 0, 0, 0);
+        pose.qDriverFromHeadRotation = HmdQuaternion_Init(1, 0, 0, 0);
+    }
     GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->device_index_, pose, sizeof(vr::DriverPose_t));
     this->last_pose_ = pose;
 }
@@ -153,22 +188,22 @@ vr::EVRInitError YetAnotherDriver::ControllerDevice::Activate(uint32_t unObjectI
     GetDriver()->GetProperties()->SetUint64Property(props, vr::Prop_CurrentUniverseId_Uint64, 2);
     
     // Set up a model "number" (not needed but good to have)
-    GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_ModelNumber_String, "hip_locomotion");
+    GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_ModelNumber_String, "yaoid_controller");
 
     // Set up a render model path
     GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_RenderModelName_String, "vr_controller_05_wireless_b");
 
     // Give SteamVR a hint at what hand this controller is for
 
-    GetDriver()->GetProperties()->SetInt32Property(props, vr::Prop_ControllerRoleHint_Int32, vr::ETrackedControllerRole::TrackedControllerRole_Treadmill);
+    GetDriver()->GetProperties()->SetInt32Property(props, vr::Prop_ControllerRoleHint_Int32, ((this->handedness_ == Handedness::LEFT) ? vr::ETrackedControllerRole::TrackedControllerRole_LeftHand : vr::ETrackedControllerRole::TrackedControllerRole_RightHand));
 
     // Set controller profile
-    GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_InputProfilePath_String, "{apriltagtrackers}/input/hipmove_bindings.json");
+    GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_InputProfilePath_String, "{yaoidvr}/input/example_controller_bindings.json");
 
     // Change the icon depending on which handedness this controller is using (ANY uses right)
     std::string controller_handedness_str = this->handedness_ == Handedness::LEFT ? "left" : "right";
-    std::string controller_ready_file = "other_status_ready.png";
-    std::string controller_not_ready_file = "other_status_off.png";
+    std::string controller_ready_file = "controller_ready_" + controller_handedness_str + ".png";
+    std::string controller_not_ready_file = "controller_not_ready_" + controller_handedness_str + ".png";
 
     GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceReady_String, controller_ready_file.c_str());
 
