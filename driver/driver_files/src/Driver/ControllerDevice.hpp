@@ -28,6 +28,7 @@ namespace YetAnotherDriver {
             virtual DeviceType GetDeviceType() override;
             virtual Handedness GetHandedness();
 
+            void SetPose(double px, double py, double pz, double qw, double qx, double qy, double qz);
             void SetDirection(float x, float y, float rx, float ry, float a, float b);
 
             virtual vr::EVRInitError Activate(uint32_t unObjectId) override;
@@ -49,6 +50,7 @@ namespace YetAnotherDriver {
         vr::HmdVector3_t pos_override_;
         bool did_vibrate_ = false;
         float vibrate_anim_state_ = 0.f;
+        std::vector<double> nextpose_;
 
         vr::VRInputComponentHandle_t haptic_component_ = 0;
 

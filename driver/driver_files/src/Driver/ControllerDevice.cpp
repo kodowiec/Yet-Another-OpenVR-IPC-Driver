@@ -17,13 +17,25 @@ YetAnotherDriver::ControllerDevice::ControllerDevice(std::string serial, Control
     serial_(serial),
     handedness_(handedness)
 {
+    std::vector<double> temp(std::vector<double>(8, -1));
+    this->nextpose_ = temp;
 }
 
 vr::HmdVector3_t YetAnotherDriver::ControllerDevice::EnableFixedPosition(){
     this->fixed_pos_ = true;
+
     this->pos_override_.v[0] = (this->handedness_ == Handedness::LEFT)? -0.2 : 0.2;
     this->pos_override_.v[1] = 1.3;
     this->pos_override_.v[2] = -0.2;
+
+    this->nextpose_[0] = this->pos_override_.v[0];
+    this->nextpose_[1] = this->pos_override_.v[1];
+    this->nextpose_[2] = this->pos_override_.v[2];
+    this->nextpose_[3] = 0.105385;
+    this->nextpose_[4] = 0.463532;
+    this->nextpose_[5] = -0.061287;
+    this->nextpose_[6] = 0.877654;
+
     return this->pos_override_;
 }
 
@@ -138,8 +150,38 @@ void YetAnotherDriver::ControllerDevice::Update()
         pose.qWorldFromDriverRotation = HmdQuaternion_Init(1, 0, 0, 0);
         pose.qDriverFromHeadRotation = HmdQuaternion_Init(1, 0, 0, 0);
     }
+    else {
+        pose.vecPosition[0] = this->nextpose_[0];
+        pose.vecPosition[1] = this->nextpose_[1];
+        pose.vecPosition[2] = this->nextpose_[2];
+        pose.poseTimeOffset = 0;
+        pose.poseIsValid = true;
+        pose.result = vr::TrackingResult_Running_OK;
+        pose.deviceIsConnected = true;
+
+        pose.qRotation.w = this->nextpose_[3];
+        pose.qRotation.x = this->nextpose_[4];
+        pose.qRotation.y = this->nextpose_[5];
+        pose.qRotation.z = this->nextpose_[6];
+
+        pose.qWorldFromDriverRotation = HmdQuaternion_Init(1, 0, 0, 0);
+        pose.qDriverFromHeadRotation = HmdQuaternion_Init(1, 0, 0, 0);
+    }
     GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->device_index_, pose, sizeof(vr::DriverPose_t));
     this->last_pose_ = pose;
+}
+
+void YetAnotherDriver::ControllerDevice::SetPose(double px, double py, double pz, double qw, double qx, double qy, double qz)
+{
+
+    this->fixed_pos_ = false;
+    this->nextpose_[0] = px;
+    this->nextpose_[1] = py;
+    this->nextpose_[2] = pz;
+    this->nextpose_[3] = qw;
+    this->nextpose_[4] = qx;
+    this->nextpose_[5] = qy;
+    this->nextpose_[6] = qz;
 }
 
 DeviceType YetAnotherDriver::ControllerDevice::GetDeviceType()

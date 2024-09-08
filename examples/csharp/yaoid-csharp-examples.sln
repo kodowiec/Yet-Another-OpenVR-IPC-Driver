@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HmdRotation", "HmdRotation\HmdRotation.csproj", "{77B5D1D0-DDA2-4DDD-9A63-5BF8C63B01AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpcCmd", "IpcCmd\IpcCmd.csproj", "{14CD2D0B-922E-4935-AD96-ACB7ACDF0D54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpcCmd", "IpcCmd\IpcCmd.csproj", "{14CD2D0B-922E-4935-AD96-ACB7ACDF0D54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerEmulator", "ControllerEmulator\ControllerEmulator.csproj", "{FDFE606B-2557-484E-8B47-477BFD31CC06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{14CD2D0B-922E-4935-AD96-ACB7ACDF0D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14CD2D0B-922E-4935-AD96-ACB7ACDF0D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14CD2D0B-922E-4935-AD96-ACB7ACDF0D54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDFE606B-2557-484E-8B47-477BFD31CC06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFE606B-2557-484E-8B47-477BFD31CC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFE606B-2557-484E-8B47-477BFD31CC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFE606B-2557-484E-8B47-477BFD31CC06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

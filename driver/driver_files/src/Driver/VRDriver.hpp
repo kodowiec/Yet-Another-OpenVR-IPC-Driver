@@ -39,7 +39,7 @@ namespace YetAnotherDriver {
         virtual ~VRDriver() = default;
 
     private:
-        std::string version = "0.1.0";
+        std::string version = "0.2.0";
 
         Ipc::Server ipcServer;
         std::shared_ptr<ControllerDevice> fakemove_;

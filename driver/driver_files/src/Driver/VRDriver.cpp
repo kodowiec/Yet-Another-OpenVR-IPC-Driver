@@ -109,6 +109,7 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     if (idx < this->controllers_.size())
                     {
                         this->controllers_[idx]->MakeDefaultPose();
+                        this->controllers_[idx]->Update();
                         s = s + " updated";
                     }
                     else
@@ -122,21 +123,46 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     s = s + " " + std::to_string(this->frame_timing_avg_);
                     s = s + " " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_frame_time_).count());
                 }
+                else if (word == "setpose")
+                {
+                    int idx;
+                    std::string type;
+                    double a, b, c, qw, qx, qy, qz, time, smoothing;
+                    iss >> idx; iss >> type; iss >> a; iss >> b; iss >> c; iss >> qw; iss >> qx; iss >> qy; iss >> qz;
+                    if (idx < ((type == "controller" || type == "c") ? this->controllers_.size() : this->trackers_.size()))
+                    {
+                        if (type == "tracker" || type == "t")
+                        {
+                            this->trackers_[idx]->save_current_pose(a, b, c, qw, qx, qy, qz, 1);
+                        }
+                        else if (type == "controller" || type == "c")
+                        {
+                            this->controllers_[idx]->SetPose(a, b, c, qw, qx, qy, qz);
+                            this->controllers_[idx]->Update();
+                        }
+                        s = s + " updated";
+                    }
+                    else
+                    {
+                        s = s + " idinvalid";
+                    }
+                }
                 else if (word == "updatepose")
                 {
                     int idx;
+                    std::string type;
                     double a, b, c, qw, qx, qy, qz, time, smoothing;
-                    iss >> idx; iss >> a; iss >> b; iss >> c; iss >> qw; iss >> qx; iss >> qy; iss >> qz; iss >> time; iss >> smoothing;
+                    iss >> idx; iss >> type; iss >> a; iss >> b; iss >> c; iss >> qw; iss >> qx; iss >> qy; iss >> qz; iss >> time; iss >> smoothing;
 
-                    if (idx < this->trackers_.size())
+                    if (idx < ( (type == "controller" || type == "c")? this->controllers_.size() : this->trackers_.size()))
                     {
                         if(time < 0)
                             time = -time;
-                        this->trackers_[idx]->save_current_pose(a, b, c, qw, qx, qy, qz, time);
-                        //this->trackers_[idx]->UpdatePos(a, b, c, time, 1-smoothing);
-                        //this->trackers_[idx]->UpdateRot(qw, qx, qy, qz, time, 1-smoothing);
 
-                        //this->trackers_[idx]->Update();
+                        if (type == "tracker" || type == "t")
+                        {
+                            this->trackers_[idx]->save_current_pose(a, b, c, qw, qx, qy, qz, time);
+                        }
                         s = s + " updated";
                     }
                     else
