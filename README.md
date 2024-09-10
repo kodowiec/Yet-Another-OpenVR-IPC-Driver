@@ -14,7 +14,7 @@ Currently there are three C# client examples in `./examples/csharp`
 - **IpcCmd** - even simpler cli allowing to send commands and receive responses
 - **ControllerEmulator** - GUI app to change position and rotation of virtual controller
 
-### Some available commands
+### Available commands
 
 #### general
 - ```getdevicepose 'id'``` : useful to get position of HMD, which is id 0. You should be able to get positions of controllers, but is very unreliable so other methods are prefered.
@@ -29,6 +29,8 @@ returns device id, position in x y z, rotation in quaternion and euler``
 types: tracker(t)
 #### controllers
 - ```addcontroller 'serial' 'hand'```: spawn controller, serial must be unique, hand must be either LEFT or RIGHT
+- ```caxis 'id' 'joystickX' 'joystickY' 'trackpadX' 'trackpadY'```: set controller axis state
+- ```cbutton 'id' 'button_code' 'pressed'```: set state of button with button_code
 - ```cfixedpose 'id'```: enable fixed position mode for controller
 - ```cdefpose 'id'```: call MakeDefaultPose() upon controller
 - ```setpose 'id' 'type' 'x' 'y' 'z' 'qw' 'qx' 'qy' 'qz'```: directly sets the pose of device

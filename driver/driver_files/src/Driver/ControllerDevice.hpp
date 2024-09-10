@@ -29,7 +29,8 @@ namespace YetAnotherDriver {
             virtual Handedness GetHandedness();
 
             void SetPose(double px, double py, double pz, double qw, double qx, double qy, double qz);
-            void SetDirection(float x, float y, float rx, float ry, float a, float b);
+            void SetDirection(float x, float y, float rx, float ry);
+            void SetButton(ButtonEmu button, bool state);
 
             virtual vr::EVRInitError Activate(uint32_t unObjectId) override;
             virtual void Deactivate() override;
@@ -60,6 +61,24 @@ namespace YetAnotherDriver {
         vr::VRInputComponentHandle_t b_button_click_component_ = 0;
         vr::VRInputComponentHandle_t b_button_touch_component_ = 0;
 
+        vr::VRInputComponentHandle_t x_button_click_component_ = 0;
+        vr::VRInputComponentHandle_t x_button_touch_component_ = 0;
+
+        vr::VRInputComponentHandle_t y_button_click_component_ = 0;
+        vr::VRInputComponentHandle_t y_button_touch_component_ = 0;
+
+        vr::VRInputComponentHandle_t left_button_click_component_ = 0;
+        vr::VRInputComponentHandle_t left_button_touch_component_ = 0;
+
+        vr::VRInputComponentHandle_t right_button_click_component_ = 0;
+        vr::VRInputComponentHandle_t right_button_touch_component_ = 0;
+
+        vr::VRInputComponentHandle_t up_button_click_component_ = 0;
+        vr::VRInputComponentHandle_t up_button_touch_component_ = 0;
+
+        vr::VRInputComponentHandle_t down_button_click_component_ = 0;
+        vr::VRInputComponentHandle_t down_button_touch_component_ = 0;
+
         vr::VRInputComponentHandle_t trigger_value_component_ = 0;
         vr::VRInputComponentHandle_t trigger_click_component_ = 0;
         vr::VRInputComponentHandle_t trigger_touch_component_ = 0;
@@ -67,11 +86,14 @@ namespace YetAnotherDriver {
         vr::VRInputComponentHandle_t grip_touch_component_ = 0;
         vr::VRInputComponentHandle_t grip_value_component_ = 0;
         vr::VRInputComponentHandle_t grip_force_component_ = 0;
+        vr::VRInputComponentHandle_t grip_click_component_ = 0;
 
         vr::VRInputComponentHandle_t system_click_component_ = 0;
         vr::VRInputComponentHandle_t system_touch_component_ = 0;
 
-        
+        vr::VRInputComponentHandle_t menu_click_component_ = 0;
+        vr::VRInputComponentHandle_t menu_touch_component_ = 0;
+
         vr::VRInputComponentHandle_t trackpad_click_component_ = 0;
         vr::VRInputComponentHandle_t trackpad_touch_component_ = 0;
         vr::VRInputComponentHandle_t trackpad_x_component_ = 0;
@@ -84,5 +106,19 @@ namespace YetAnotherDriver {
 
         //vr::VRInputComponentHandle_t skeleton_left_component_ = 0;
         //vr::VRInputComponentHandle_t skeleton_right_component_ = 0;
+    };
+
+    enum ButtonEmu {
+        A,
+        B,
+        X,
+        Y,
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+        GRIP,
+        MENU,
+        SYSTEM
     };
 };

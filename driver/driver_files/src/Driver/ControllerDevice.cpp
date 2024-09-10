@@ -3,28 +3,28 @@
 #include "ControllerDevice.hpp"
 #include "Key.hpp"
 
-inline vr::HmdQuaternion_t HmdQuaternion_Init( double w, double x, double y, double z )
+inline vr::HmdQuaternion_t HmdQuaternion_Init(double w, double x, double y, double z)
 {
     vr::HmdQuaternion_t quat;
-	quat.w = w;
-	quat.x = x;
-	quat.y = y;
-	quat.z = z;
-	return quat;
+    quat.w = w;
+    quat.x = x;
+    quat.y = y;
+    quat.z = z;
+    return quat;
 }
 
-YetAnotherDriver::ControllerDevice::ControllerDevice(std::string serial, ControllerDevice::Handedness handedness):
-    serial_(serial),
-    handedness_(handedness)
+YetAnotherDriver::ControllerDevice::ControllerDevice(std::string serial, ControllerDevice::Handedness handedness) : serial_(serial),
+                                                                                                                    handedness_(handedness)
 {
     std::vector<double> temp(std::vector<double>(8, -1));
     this->nextpose_ = temp;
 }
 
-vr::HmdVector3_t YetAnotherDriver::ControllerDevice::EnableFixedPosition(){
+vr::HmdVector3_t YetAnotherDriver::ControllerDevice::EnableFixedPosition()
+{
     this->fixed_pos_ = true;
 
-    this->pos_override_.v[0] = (this->handedness_ == Handedness::LEFT)? -0.2 : 0.2;
+    this->pos_override_.v[0] = (this->handedness_ == Handedness::LEFT) ? -0.2 : 0.2;
     this->pos_override_.v[1] = 1.3;
     this->pos_override_.v[2] = -0.2;
 
@@ -46,9 +46,51 @@ std::string YetAnotherDriver::ControllerDevice::GetSerial()
 
 long long counter = 0;
 
-void YetAnotherDriver::ControllerDevice::SetDirection(float x, float y, float rx, float ry, float a, float b)
+void YetAnotherDriver::ControllerDevice::SetButton(YetAnotherDriver::ButtonEmu button, bool state)
 {
-    if(x == 0.0f && y == 0.0f)
+    switch (button)
+    {
+    case A:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, state, 0);
+        break;
+    case B:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_click_component_, state, 0);
+        break;
+    case X:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->x_button_click_component_, state, 0);
+        break;
+    case Y:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->y_button_click_component_, state, 0);
+        break;
+    case UP:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->up_button_click_component_, state, 0);
+        break;
+    case DOWN:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->down_button_click_component_, state, 0);
+        break;
+    case LEFT:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->left_button_click_component_, state, 0);
+        break;
+    case RIGHT:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->right_button_click_component_, state, 0);
+        break;
+    case GRIP:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->grip_click_component_, state, 0);
+        break;
+    case MENU:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->menu_click_component_, state, 0);
+        break;
+    case SYSTEM:
+        GetDriver()->GetInput()->UpdateBooleanComponent(this->system_click_component_, state, 0);
+        break;
+    default:
+        break;
+    }
+}
+
+void YetAnotherDriver::ControllerDevice::SetDirection(float x, float y, float rx, float ry)
+{
+    if (x == 0.0f && y == 0.0f)
         GetDriver()->GetInput()->UpdateBooleanComponent(this->joystick_touch_component_, false, 0);
     else
         GetDriver()->GetInput()->UpdateBooleanComponent(this->joystick_touch_component_, true, 0);
@@ -63,24 +105,6 @@ void YetAnotherDriver::ControllerDevice::SetDirection(float x, float y, float rx
 
     GetDriver()->GetInput()->UpdateScalarComponent(this->trackpad_x_component_, rx, 0);
     GetDriver()->GetInput()->UpdateScalarComponent(this->trackpad_y_component_, ry, 0);
-
-    if (a > 0.5) {
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, true, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_touch_component_, true, 0);
-    }
-    else {
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, false, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_touch_component_, false, 0);
-    }
-
-    if (b > 0.5) {
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_click_component_, true, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_touch_component_, true, 0);
-    }
-    else {
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_click_component_, false, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_touch_component_, false, 0);
-    }
 }
 
 void YetAnotherDriver::ControllerDevice::Update()
@@ -90,11 +114,14 @@ void YetAnotherDriver::ControllerDevice::Update()
 
     // Check if this device was asked to be identified
     auto events = GetDriver()->GetOpenVREvents();
-    for (auto event : events) {
+    for (auto event : events)
+    {
         // Note here, event.trackedDeviceIndex does not necissarily equal this->device_index_, not sure why, but the component handle will match so we can just use that instead
-        //if (event.trackedDeviceIndex == this->device_index_) {
-        if (event.eventType == vr::EVREventType::VREvent_Input_HapticVibration) {
-            if (event.data.hapticVibration.componentHandle == this->haptic_component_) {
+        // if (event.trackedDeviceIndex == this->device_index_) {
+        if (event.eventType == vr::EVREventType::VREvent_Input_HapticVibration)
+        {
+            if (event.data.hapticVibration.componentHandle == this->haptic_component_)
+            {
                 this->did_vibrate_ = true;
             }
         }
@@ -102,9 +129,11 @@ void YetAnotherDriver::ControllerDevice::Update()
     }
 
     // Check if we need to keep vibrating
-    if (this->did_vibrate_) {
-        this->vibrate_anim_state_ += (GetDriver()->GetLastFrameTime().count()/1000.f);
-        if (this->vibrate_anim_state_ > 1.0f) {
+    if (this->did_vibrate_)
+    {
+        this->vibrate_anim_state_ += (GetDriver()->GetLastFrameTime().count() / 1000.f);
+        if (this->vibrate_anim_state_ > 1.0f)
+        {
             this->did_vibrate_ = false;
             this->vibrate_anim_state_ = 0.0f;
         }
@@ -112,28 +141,10 @@ void YetAnotherDriver::ControllerDevice::Update()
 
     // Setup pose for this frame
     auto pose = IVRDevice::MakeDefaultPose();
-    /*
-    // Check if we need to press any buttons (I am only hooking up the A button here but the process is the same for the others)
-    // You will still need to go into the games button bindings and hook up each one (ie. a to left click, b to right click, etc.) for them to work properly
-    if (counter%200 < 100) {
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, true, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_touch_component_, true, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->joystick_touch_component_, true, 0);
-        GetDriver()->GetInput()->UpdateScalarComponent(this->joystick_y_component_, 1.0f, 0);
-    }
-    else {
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, false, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_touch_component_, false, 0);
-        GetDriver()->GetInput()->UpdateBooleanComponent(this->joystick_touch_component_, false, 0);
-        GetDriver()->GetInput()->UpdateScalarComponent(this->joystick_y_component_, 0.0f, 0);
-    }
-
-    counter++;
-
-    */
 
     // Post pose
-    if (fixed_pos_) {
+    if (fixed_pos_)
+    {
         pose.vecPosition[0] = this->pos_override_.v[0];
         pose.vecPosition[1] = this->pos_override_.v[1];
         pose.vecPosition[2] = this->pos_override_.v[2];
@@ -150,7 +161,8 @@ void YetAnotherDriver::ControllerDevice::Update()
         pose.qWorldFromDriverRotation = HmdQuaternion_Init(1, 0, 0, 0);
         pose.qDriverFromHeadRotation = HmdQuaternion_Init(1, 0, 0, 0);
     }
-    else {
+    else
+    {
         pose.vecPosition[0] = this->nextpose_[0];
         pose.vecPosition[1] = this->nextpose_[1];
         pose.vecPosition[2] = this->nextpose_[2];
@@ -173,7 +185,6 @@ void YetAnotherDriver::ControllerDevice::Update()
 
 void YetAnotherDriver::ControllerDevice::SetPose(double px, double py, double pz, double qw, double qx, double qy, double qz)
 {
-
     this->fixed_pos_ = false;
     this->nextpose_[0] = px;
     this->nextpose_[1] = py;
@@ -209,7 +220,7 @@ vr::EVRInitError YetAnotherDriver::ControllerDevice::Activate(uint32_t unObjectI
     auto props = GetDriver()->GetProperties()->TrackedDeviceToPropertyContainer(this->device_index_);
 
     // Setup inputs and outputs
-   
+
     GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/joystick/click", &this->joystick_click_component_);
     GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/joystick/touch", &this->joystick_touch_component_);
     GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/x", &this->joystick_x_component_, vr::EVRScalarType::VRScalarType_Absolute, vr::EVRScalarUnits::VRScalarUnits_NormalizedTwoSided);
@@ -221,19 +232,30 @@ vr::EVRInitError YetAnotherDriver::ControllerDevice::Activate(uint32_t unObjectI
     GetDriver()->GetInput()->CreateScalarComponent(props, "/input/trackpad/y", &this->trackpad_y_component_, vr::EVRScalarType::VRScalarType_Absolute, vr::EVRScalarUnits::VRScalarUnits_NormalizedTwoSided);
 
     GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/a/click", &this->a_button_click_component_);
-    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/a/touch", &this->a_button_touch_component_);
-
     GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/b/click", &this->b_button_click_component_);
-    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/b/touch", &this->b_button_touch_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/x/click", &this->x_button_click_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/y/click", &this->y_button_click_component_);
+
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/up/click", &this->up_button_click_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/down/click", &this->down_button_click_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/left/click", &this->left_button_click_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/right/click", &this->right_button_click_component_);
+
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/application_menu/click", &this->menu_click_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/system/click", &this->system_click_component_);
+    GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/grip/click", &this->grip_click_component_);
+    GetDriver()->GetInput()->CreateScalarComponent(props, "/input/trigger/value", &this->trigger_value_component_, vr::EVRScalarType::VRScalarType_Absolute, vr::EVRScalarUnits::VRScalarUnits_NormalizedOneSided);
+
+    GetDriver()->GetInput()->CreateHapticComponent(props, "/output/haptic", &haptic_component_);
 
     // Set some universe ID (Must be 2 or higher)
     GetDriver()->GetProperties()->SetUint64Property(props, vr::Prop_CurrentUniverseId_Uint64, 2);
-    
+
     // Set up a model "number" (not needed but good to have)
     GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_ModelNumber_String, "yaoid_controller");
 
     // Set up a render model path
-    GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_RenderModelName_String, "vr_controller_05_wireless_b");
+    GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_RenderModelName_String, "vr_controller_vive_1_5");
 
     // Give SteamVR a hint at what hand this controller is for
 
@@ -244,8 +266,8 @@ vr::EVRInitError YetAnotherDriver::ControllerDevice::Activate(uint32_t unObjectI
 
     // Change the icon depending on which handedness this controller is using (ANY uses right)
     std::string controller_handedness_str = this->handedness_ == Handedness::LEFT ? "left" : "right";
-    std::string controller_ready_file = "controller_ready_" + controller_handedness_str + ".png";
-    std::string controller_not_ready_file = "controller_not_ready_" + controller_handedness_str + ".png";
+    std::string controller_ready_file = "{yaoidvr}/icons/controller_ready_" + controller_handedness_str + ".png";
+    std::string controller_not_ready_file = "{yaoidvr}/icons/controller_not_ready_" + controller_handedness_str + ".png";
 
     GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceReady_String, controller_ready_file.c_str());
 
@@ -269,12 +291,12 @@ void YetAnotherDriver::ControllerDevice::EnterStandby()
 {
 }
 
-void* YetAnotherDriver::ControllerDevice::GetComponent(const char* pchComponentNameAndVersion)
+void *YetAnotherDriver::ControllerDevice::GetComponent(const char *pchComponentNameAndVersion)
 {
     return nullptr;
 }
 
-void YetAnotherDriver::ControllerDevice::DebugRequest(const char* pchRequest, char* pchResponseBuffer, uint32_t unResponseBufferSize)
+void YetAnotherDriver::ControllerDevice::DebugRequest(const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize)
 {
     if (unResponseBufferSize >= 1)
         pchResponseBuffer[0] = 0;

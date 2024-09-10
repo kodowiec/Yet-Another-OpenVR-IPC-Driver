@@ -3,21 +3,22 @@
 #include <Driver/TrackerDevice.hpp>
 #include <Driver/ControllerDevice.hpp>
 
-vr::EVRInitError YetAnotherDriver::VRDriver::Init(vr::IVRDriverContext* pDriverContext)
+vr::EVRInitError YetAnotherDriver::VRDriver::Init(vr::IVRDriverContext *pDriverContext)
 {
     // Perform driver context initialisation
-    if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
+    if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None)
+    {
         return init_error;
     }
 
     Log("Activating YAOID Driver Bridge " + version + "...");
 
     // Add a HMD
-    //this->AddDevice(std::make_shared<HMDDevice>("Example_HMDDevice"));
+    // this->AddDevice(std::make_shared<HMDDevice>("Example_HMDDevice"));
 
     // Add a couple controllers
-    //this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice", ControllerDevice::Handedness::ANY));
-    //this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice_Right", ControllerDevice::Handedness::RIGHT));
+    // this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice", ControllerDevice::Handedness::ANY));
+    // this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice_Right", ControllerDevice::Handedness::RIGHT));
 
     ipcServer.init("YAOIDvr");
 
@@ -26,7 +27,7 @@ vr::EVRInitError YetAnotherDriver::VRDriver::Init(vr::IVRDriverContext* pDriverC
 
     Log("YAOID Driver Loaded Successfully");
 
-	return vr::VRInitError_None;
+    return vr::VRInitError_None;
 }
 
 void YetAnotherDriver::VRDriver::Cleanup()
@@ -41,10 +42,10 @@ void YetAnotherDriver::VRDriver::PipeThread()
     {
         Ipc::Connection ipcConnection = ipcServer.accept();
 
-        //we go and read it into our buffer
+        // we go and read it into our buffer
         if (ipcConnection.recv(buffer, sizeof(buffer)))
         {
-            //convert our buffer to string
+            // convert our buffer to string
 
             std::string rec = buffer;
 
@@ -65,7 +66,7 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     if (name == "")
                     {
                         name = "UnnamedTracker" + std::to_string(this->trackers_.size());
-                        role = "TrackerRole_Waist";        //should be "vive_tracker_left_foot" or "vive_tracker_right_foot" or "vive_tracker_waist"
+                        role = "TrackerRole_Waist"; // should be "vive_tracker_left_foot" or "vive_tracker_right_foot" or "vive_tracker_waist"
                     }
 
                     auto addtracker = std::make_shared<TrackerDevice>(name, role);
@@ -81,11 +82,47 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     iss >> hand;
                     bool isRight = hand == "RIGHT";
 
-                    auto adddevice = std::make_shared<ControllerDevice>("YAOI_"+name+"_" + (isRight? "RIGHT" : "LEFT"), isRight? ControllerDevice::Handedness::RIGHT : ControllerDevice::Handedness::LEFT);
+                    auto adddevice = std::make_shared<ControllerDevice>("YAOI_" + name + "_" + (isRight ? "RIGHT" : "LEFT"), isRight ? ControllerDevice::Handedness::RIGHT : ControllerDevice::Handedness::LEFT);
                     this->AddDevice(adddevice);
                     this->controllers_.push_back(adddevice);
                 }
-                else if (word == "cfixedpose") {
+                else if (word == "cbutton")
+                {
+                    int idx;
+                    int button;
+                    bool state;
+                    iss >> idx;
+                    iss >> button;
+                    iss >> state;
+
+                    if (idx < this->controllers_.size())
+                    {
+                        this->controllers_[idx]->SetButton((ButtonEmu)button, state);
+                        s = s + " updated";
+                    }
+                    else
+                    {
+                        s = s + " idinvalid";
+                    }
+                }
+                else if (word == "caxis")
+                {
+                    int idx;
+                    float jx; float jy; float tx; float ty;
+                    iss >> idx; iss >> jx; iss >> jy; iss >> tx; iss >> ty;
+
+                    if (idx < this->controllers_.size())
+                    {
+                        this->controllers_[idx]->SetDirection(jx, jy, tx, ty);
+                        s = s + " updated";
+                    }
+                    else
+                    {
+                        s = s + " idinvalid";
+                    }
+                }
+                else if (word == "cfixedpose")
+                {
                     int idx;
                     iss >> idx;
 
@@ -128,7 +165,15 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     int idx;
                     std::string type;
                     double a, b, c, qw, qx, qy, qz, time, smoothing;
-                    iss >> idx; iss >> type; iss >> a; iss >> b; iss >> c; iss >> qw; iss >> qx; iss >> qy; iss >> qz;
+                    iss >> idx;
+                    iss >> type;
+                    iss >> a;
+                    iss >> b;
+                    iss >> c;
+                    iss >> qw;
+                    iss >> qx;
+                    iss >> qy;
+                    iss >> qz;
                     if (idx < ((type == "controller" || type == "c") ? this->controllers_.size() : this->trackers_.size()))
                     {
                         if (type == "tracker" || type == "t")
@@ -152,11 +197,21 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     int idx;
                     std::string type;
                     double a, b, c, qw, qx, qy, qz, time, smoothing;
-                    iss >> idx; iss >> type; iss >> a; iss >> b; iss >> c; iss >> qw; iss >> qx; iss >> qy; iss >> qz; iss >> time; iss >> smoothing;
+                    iss >> idx;
+                    iss >> type;
+                    iss >> a;
+                    iss >> b;
+                    iss >> c;
+                    iss >> qw;
+                    iss >> qx;
+                    iss >> qy;
+                    iss >> qz;
+                    iss >> time;
+                    iss >> smoothing;
 
-                    if (idx < ( (type == "controller" || type == "c")? this->controllers_.size() : this->trackers_.size()))
+                    if (idx < ((type == "controller" || type == "c") ? this->controllers_.size() : this->trackers_.size()))
                     {
-                        if(time < 0)
+                        if (time < 0)
                             time = -time;
 
                         if (type == "tracker" || type == "t")
@@ -169,7 +224,6 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     {
                         s = s + " idinvalid";
                     }
-
                 }
                 else if (word == "getdevicepose")
                 {
@@ -223,7 +277,6 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     {
                         s = s + " idinvalid";
                     }
-
                 }
                 else if (word == "numtrackers")
                 {
@@ -238,8 +291,8 @@ void YetAnotherDriver::VRDriver::PipeThread()
                     iss >> mtime;
                     iss >> msmooth;
 
-                    for (auto& device : this->trackers_)
-                        device->reinit(msaved,mtime,msmooth);
+                    for (auto &device : this->trackers_)
+                        device->reinit(msaved, mtime, msmooth);
 
                     tracker_max_saved = msaved;
                     tracker_max_time = mtime;
@@ -279,9 +332,8 @@ void YetAnotherDriver::VRDriver::RunFrame()
 
     this->frame_timing_avg_ = this->frame_timing_avg_ * 0.9 + ((double)this->frame_timing_.count()) * 0.1;
 
-    for (auto& device : this->trackers_)
+    for (auto &device : this->trackers_)
         device->Update();
-
 }
 
 bool YetAnotherDriver::VRDriver::ShouldBlockStandbyMode()
@@ -316,24 +368,25 @@ bool YetAnotherDriver::VRDriver::AddDevice(std::shared_ptr<IVRDevice> device)
 {
     vr::ETrackedDeviceClass openvr_device_class;
     // Remember to update this switch when new device types are added
-    switch (device->GetDeviceType()) {
-        case DeviceType::CONTROLLER:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
-            break;
-        case DeviceType::HMD:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_HMD;
-            break;
-        case DeviceType::TRACKER:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_GenericTracker;
-            break;
-        case DeviceType::TRACKING_REFERENCE:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference;
-            break;
-        default:
-            return false;
+    switch (device->GetDeviceType())
+    {
+    case DeviceType::CONTROLLER:
+        openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
+        break;
+    case DeviceType::HMD:
+        openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_HMD;
+        break;
+    case DeviceType::TRACKER:
+        openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_GenericTracker;
+        break;
+    case DeviceType::TRACKING_REFERENCE:
+        openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference;
+        break;
+    default:
+        return false;
     }
     bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(device->GetSerial().c_str(), openvr_device_class, device.get());
-    if(result)
+    if (result)
         this->devices_.push_back(device);
     return result;
 }
@@ -342,23 +395,27 @@ YetAnotherDriver::SettingsValue YetAnotherDriver::VRDriver::GetSettingsValue(std
 {
     vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
     int int_value = vr::VRSettings()->GetInt32(settings_key_.c_str(), key.c_str(), &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
+    if (err == vr::EVRSettingsError::VRSettingsError_None)
+    {
         return int_value;
     }
     err = vr::EVRSettingsError::VRSettingsError_None;
     float float_value = vr::VRSettings()->GetFloat(settings_key_.c_str(), key.c_str(), &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
+    if (err == vr::EVRSettingsError::VRSettingsError_None)
+    {
         return float_value;
     }
     err = vr::EVRSettingsError::VRSettingsError_None;
     bool bool_value = vr::VRSettings()->GetBool(settings_key_.c_str(), key.c_str(), &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
+    if (err == vr::EVRSettingsError::VRSettingsError_None)
+    {
         return bool_value;
     }
     std::string str_value;
     str_value.reserve(1024);
     vr::VRSettings()->GetString(settings_key_.c_str(), key.c_str(), str_value.data(), 1024, &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
+    if (err == vr::EVRSettingsError::VRSettingsError_None)
+    {
         return str_value;
     }
     err = vr::EVRSettingsError::VRSettingsError_None;
@@ -372,17 +429,17 @@ void YetAnotherDriver::VRDriver::Log(std::string message)
     vr::VRDriverLog()->Log(message_endl.c_str());
 }
 
-vr::IVRDriverInput* YetAnotherDriver::VRDriver::GetInput()
+vr::IVRDriverInput *YetAnotherDriver::VRDriver::GetInput()
 {
     return vr::VRDriverInput();
 }
 
-vr::CVRPropertyHelpers* YetAnotherDriver::VRDriver::GetProperties()
+vr::CVRPropertyHelpers *YetAnotherDriver::VRDriver::GetProperties()
 {
     return vr::VRProperties();
 }
 
-vr::IVRServerDriverHost* YetAnotherDriver::VRDriver::GetDriverHost()
+vr::IVRServerDriverHost *YetAnotherDriver::VRDriver::GetDriverHost()
 {
     return vr::VRServerDriverHost();
 }
@@ -392,7 +449,8 @@ vr::IVRServerDriverHost* YetAnotherDriver::VRDriver::GetDriverHost()
 // from: https://github.com/Omnifinity/OpenVR-Tracking-Example/blob/master/HTC%20Lighthouse%20Tracking%20Example/LighthouseTracking.cpp
 //-----------------------------------------------------------------------------
 
-vr::HmdQuaternion_t YetAnotherDriver::VRDriver::GetRotation(vr::HmdMatrix34_t matrix) {
+vr::HmdQuaternion_t YetAnotherDriver::VRDriver::GetRotation(vr::HmdMatrix34_t matrix)
+{
     vr::HmdQuaternion_t q;
 
     q.w = sqrt(fmax(0, 1 + matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2])) / 2;
@@ -409,7 +467,8 @@ vr::HmdQuaternion_t YetAnotherDriver::VRDriver::GetRotation(vr::HmdMatrix34_t ma
 // from: https://github.com/Omnifinity/OpenVR-Tracking-Example/blob/master/HTC%20Lighthouse%20Tracking%20Example/LighthouseTracking.cpp
 //-----------------------------------------------------------------------------
 
-vr::HmdVector3_t YetAnotherDriver::VRDriver::GetPosition(vr::HmdMatrix34_t matrix) {
+vr::HmdVector3_t YetAnotherDriver::VRDriver::GetPosition(vr::HmdMatrix34_t matrix)
+{
     vr::HmdVector3_t vector;
 
     vector.v[0] = matrix.m[0][3];
@@ -419,27 +478,28 @@ vr::HmdVector3_t YetAnotherDriver::VRDriver::GetPosition(vr::HmdMatrix34_t matri
     return vector;
 }
 
-vr::HmdVector3_t YetAnotherDriver::VRDriver::GetEuler(vr::HmdMatrix34_t matrix) {
+vr::HmdVector3_t YetAnotherDriver::VRDriver::GetEuler(vr::HmdMatrix34_t matrix)
+{
     // from:  https://github.com/matzman666/OpenVR-Inspector/blob/master/src/model/itemviewmodel.cpp
-            // Hmd Rotation //
-        /*
-        | Intrinsic y-x'-z" rotation matrix:
-        | cr*cy+sp*sr*sy | cr*sp*sy-cy*sr | cp*sy |
-        | cp*sr          | cp*cr          |-sp    |
-        | cy*sp*sr-cr*sy | cr*cy*sp+sr*sy | cp*cy |
+    // Hmd Rotation //
+    /*
+    | Intrinsic y-x'-z" rotation matrix:
+    | cr*cy+sp*sr*sy | cr*sp*sy-cy*sr | cp*sy |
+    | cp*sr          | cp*cr          |-sp    |
+    | cy*sp*sr-cr*sy | cr*cy*sp+sr*sy | cp*cy |
 
-        yaw = atan2(cp*sy, cp*cy) [pi, -pi], CCW
-        pitch = -asin(-sp) [pi/2, -pi/2]
-        roll = atan2(cp*sr, cp*cr) [pi, -pi], CW
-        */
-    //auto yaw = std::atan2(pose->mDeviceToAbsoluteTracking.m[0][2], pose->mDeviceToAbsoluteTracking.m[2][2]);
-    //auto pitch = -std::asin(pose->mDeviceToAbsoluteTracking.m[1][2]);
-    //auto roll = std::atan2(pose->mDeviceToAbsoluteTracking.m[1][0], pose->mDeviceToAbsoluteTracking.m[1][1]);
+    yaw = atan2(cp*sy, cp*cy) [pi, -pi], CCW
+    pitch = -asin(-sp) [pi/2, -pi/2]
+    roll = atan2(cp*sr, cp*cr) [pi, -pi], CW
+    */
+    // auto yaw = std::atan2(pose->mDeviceToAbsoluteTracking.m[0][2], pose->mDeviceToAbsoluteTracking.m[2][2]);
+    // auto pitch = -std::asin(pose->mDeviceToAbsoluteTracking.m[1][2]);
+    // auto roll = std::atan2(pose->mDeviceToAbsoluteTracking.m[1][0], pose->mDeviceToAbsoluteTracking.m[1][1]);
     vr::HmdVector3_t vector;
 
-    vector.v[0] = std::atan2(matrix.m[0][2], matrix.m[2][2]); //yaw
-    vector.v[1] = -std::asin(matrix.m[1][2]);                 //pitch
-    vector.v[2] = std::atan2(matrix.m[1][0], matrix.m[1][1]); //roll
+    vector.v[0] = std::atan2(matrix.m[0][2], matrix.m[2][2]); // yaw
+    vector.v[1] = -std::asin(matrix.m[1][2]);                 // pitch
+    vector.v[2] = std::atan2(matrix.m[1][0], matrix.m[1][1]); // roll
 
     return vector;
 }
