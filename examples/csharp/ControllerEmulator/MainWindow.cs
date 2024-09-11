@@ -27,19 +27,33 @@ namespace ControllerEmulator
 
         int startId = 0;
 
+        enum ButtonEmu
+        {
+            A,
+            B,
+            X,
+            Y,
+            UP,
+            DOWN,
+            LEFT,
+            RIGHT,
+            GRIP,
+            MENU,
+            SYSTEM
+        };
+
         public MainWindow()
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
-
+            
             InitializeComponent();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             drawOrigin = new Point(pb_Preview.Width / 2, pb_Preview.Height / 2);
-            drawing = new Math3D.Math3D.Cube(200, 100, 20);
+            drawing = new Math3D.Math3D.Cube(50, 150, 20);
             drawing.InitializeCube();
-            drawing.FillBack = true;
             pb_Preview.Image = drawing.DrawCube(drawOrigin);
         }
 
@@ -169,6 +183,64 @@ namespace ControllerEmulator
             UpdateStatus(ipc.SendRecv($"cfixedpose 0"));
 
             startId += 1;
+        }
+
+        private void ButtonEmuClick(object sender, EventArgs e)
+        {
+        }
+
+        private void ButtonEmuDown(object sender, MouseEventArgs e)
+        {
+            if (ipc == null) return;
+            Enum.TryParse(((Button)sender).Text, out ButtonEmu buttonValue);
+            ipc.Send($"cbutton {tb_DevId.Text} {(int)buttonValue} 1");
+            Debug.WriteLine(ipc.Receive());
+        }
+
+        private void ButtonEmuUp(object sender, MouseEventArgs e)
+        {
+            if (ipc == null) return;
+            Enum.TryParse(((Button)sender).Text, out ButtonEmu buttonValue);
+            ipc.SendRecv($"cbutton {tb_DevId.Text} {(int)buttonValue} 0");
+        }
+
+        private void btn_AnalogReset_Click(object sender, EventArgs e)
+        {
+            if (ipc == null) return;    
+            ipc.SendRecv($"caxis {tb_DevId.Text} 0.0 0.0 0.0 0.0");
+            track_AnalogX.Value = 0;
+            track_AnalogY.Value = 0;
+            pnl_AnalogPointer.Location = new Point(65, 65);
+        }
+
+        private void track_AnalogX_Scroll(object sender, EventArgs e)
+        {
+            float value = ((TrackBar)sender).Value / 100.0f;
+            int x = (int)(value * 65.0f) + 65;
+            pnl_AnalogPointer.Location = new Point(x, pnl_AnalogPointer.Location.Y);
+            UpdateAnalog();
+
+        }
+
+        private void track_AnalogY_Scroll(object sender, EventArgs e)
+        {
+            float value = -((TrackBar)sender).Value / 100.0f;
+            int y = (int)(value * 65.0f) + 65;
+            pnl_AnalogPointer.Location = new Point(pnl_AnalogPointer.Location.X, y);
+            UpdateAnalog();
+        }
+
+        void UpdateAnalog()
+        {
+            if (ipc == null) return;
+            if (radio_Joystick.Checked)
+            {
+                ipc.SendRecv($"caxis {tb_DevId.Text} {track_AnalogX.Value / 100f} {track_AnalogY.Value / 100f} 0.0 0.0");
+            } 
+            else if (radio_Touchpad.Checked)
+            {
+                ipc.SendRecv($"caxis {tb_DevId.Text} 0.0 0.0 {track_AnalogX.Value / 100.0f} {track_AnalogY.Value / 100.0f}");
+            }
         }
     }
 }

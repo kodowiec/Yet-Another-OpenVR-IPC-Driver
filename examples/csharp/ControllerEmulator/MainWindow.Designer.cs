@@ -57,6 +57,25 @@
             track_PosZ = new TrackBar();
             track_PosY = new TrackBar();
             track_PosX = new TrackBar();
+            gb_Buttons = new GroupBox();
+            btn_BtnSYSTEM = new Button();
+            btn_BtnMENU = new Button();
+            btn_BtnRIGHT = new Button();
+            btn_BtnLEFT = new Button();
+            btn_BtnDOWN = new Button();
+            btn_BtnUP = new Button();
+            btn_BtnY = new Button();
+            btn_BtnX = new Button();
+            btn_BtnB = new Button();
+            btn_BtnA = new Button();
+            gb_Analog = new GroupBox();
+            btn_AnalogReset = new Button();
+            panel_AnalogPreview = new Panel();
+            pnl_AnalogPointer = new Panel();
+            track_AnalogY = new TrackBar();
+            track_AnalogX = new TrackBar();
+            radio_Joystick = new RadioButton();
+            radio_Touchpad = new RadioButton();
             ((System.ComponentModel.ISupportInitialize)pb_Preview).BeginInit();
             gb_ControllerCreation.SuspendLayout();
             gb_Rotation.SuspendLayout();
@@ -68,6 +87,11 @@
             ((System.ComponentModel.ISupportInitialize)track_PosZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)track_PosY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)track_PosX).BeginInit();
+            gb_Buttons.SuspendLayout();
+            gb_Analog.SuspendLayout();
+            panel_AnalogPreview.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)track_AnalogY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)track_AnalogX).BeginInit();
             SuspendLayout();
             // 
             // tb_IpcPipe
@@ -136,9 +160,9 @@
             // 
             // pb_Preview
             // 
-            pb_Preview.Location = new Point(0, 175);
+            pb_Preview.Location = new Point(2, 175);
             pb_Preview.Name = "pb_Preview";
-            pb_Preview.Size = new Size(287, 218);
+            pb_Preview.Size = new Size(283, 216);
             pb_Preview.TabIndex = 7;
             pb_Preview.TabStop = false;
             // 
@@ -279,7 +303,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { lbl_Status });
             statusStrip1.Location = new Point(0, 423);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(605, 22);
+            statusStrip1.Size = new Size(786, 22);
             statusStrip1.TabIndex = 12;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -370,11 +394,237 @@
             track_PosX.Value = -20;
             track_PosX.Scroll += track_PosX_Scroll;
             // 
+            // gb_Buttons
+            // 
+            gb_Buttons.Controls.Add(btn_BtnSYSTEM);
+            gb_Buttons.Controls.Add(btn_BtnMENU);
+            gb_Buttons.Controls.Add(btn_BtnRIGHT);
+            gb_Buttons.Controls.Add(btn_BtnLEFT);
+            gb_Buttons.Controls.Add(btn_BtnDOWN);
+            gb_Buttons.Controls.Add(btn_BtnUP);
+            gb_Buttons.Controls.Add(btn_BtnY);
+            gb_Buttons.Controls.Add(btn_BtnX);
+            gb_Buttons.Controls.Add(btn_BtnB);
+            gb_Buttons.Controls.Add(btn_BtnA);
+            gb_Buttons.Location = new Point(599, 12);
+            gb_Buttons.Name = "gb_Buttons";
+            gb_Buttons.Size = new Size(179, 169);
+            gb_Buttons.TabIndex = 14;
+            gb_Buttons.TabStop = false;
+            gb_Buttons.Text = "Buttons";
+            // 
+            // btn_BtnSYSTEM
+            // 
+            btn_BtnSYSTEM.Location = new Point(92, 138);
+            btn_BtnSYSTEM.Name = "btn_BtnSYSTEM";
+            btn_BtnSYSTEM.Size = new Size(80, 23);
+            btn_BtnSYSTEM.TabIndex = 9;
+            btn_BtnSYSTEM.Text = "SYSTEM";
+            btn_BtnSYSTEM.UseVisualStyleBackColor = true;
+            btn_BtnSYSTEM.Click += ButtonEmuClick;
+            btn_BtnSYSTEM.MouseDown += ButtonEmuDown;
+            btn_BtnSYSTEM.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnMENU
+            // 
+            btn_BtnMENU.Location = new Point(6, 138);
+            btn_BtnMENU.Name = "btn_BtnMENU";
+            btn_BtnMENU.Size = new Size(80, 23);
+            btn_BtnMENU.TabIndex = 8;
+            btn_BtnMENU.Text = "MENU";
+            btn_BtnMENU.UseVisualStyleBackColor = true;
+            btn_BtnMENU.Click += ButtonEmuClick;
+            btn_BtnMENU.MouseDown += ButtonEmuDown;
+            btn_BtnMENU.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnRIGHT
+            // 
+            btn_BtnRIGHT.Location = new Point(92, 109);
+            btn_BtnRIGHT.Name = "btn_BtnRIGHT";
+            btn_BtnRIGHT.Size = new Size(80, 23);
+            btn_BtnRIGHT.TabIndex = 7;
+            btn_BtnRIGHT.Text = "RIGHT";
+            btn_BtnRIGHT.UseVisualStyleBackColor = true;
+            btn_BtnRIGHT.Click += ButtonEmuClick;
+            btn_BtnRIGHT.MouseDown += ButtonEmuDown;
+            btn_BtnRIGHT.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnLEFT
+            // 
+            btn_BtnLEFT.Location = new Point(6, 109);
+            btn_BtnLEFT.Name = "btn_BtnLEFT";
+            btn_BtnLEFT.Size = new Size(80, 23);
+            btn_BtnLEFT.TabIndex = 6;
+            btn_BtnLEFT.Text = "LEFT";
+            btn_BtnLEFT.UseVisualStyleBackColor = true;
+            btn_BtnLEFT.Click += ButtonEmuClick;
+            btn_BtnLEFT.MouseDown += ButtonEmuDown;
+            btn_BtnLEFT.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnDOWN
+            // 
+            btn_BtnDOWN.Location = new Point(92, 80);
+            btn_BtnDOWN.Name = "btn_BtnDOWN";
+            btn_BtnDOWN.Size = new Size(80, 23);
+            btn_BtnDOWN.TabIndex = 5;
+            btn_BtnDOWN.Text = "DOWN";
+            btn_BtnDOWN.UseVisualStyleBackColor = true;
+            btn_BtnDOWN.Click += ButtonEmuClick;
+            btn_BtnDOWN.MouseDown += ButtonEmuDown;
+            btn_BtnDOWN.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnUP
+            // 
+            btn_BtnUP.Location = new Point(6, 80);
+            btn_BtnUP.Name = "btn_BtnUP";
+            btn_BtnUP.Size = new Size(80, 23);
+            btn_BtnUP.TabIndex = 4;
+            btn_BtnUP.Text = "UP";
+            btn_BtnUP.UseVisualStyleBackColor = true;
+            btn_BtnUP.Click += ButtonEmuClick;
+            btn_BtnUP.MouseDown += ButtonEmuDown;
+            btn_BtnUP.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnY
+            // 
+            btn_BtnY.Location = new Point(92, 51);
+            btn_BtnY.Name = "btn_BtnY";
+            btn_BtnY.Size = new Size(80, 23);
+            btn_BtnY.TabIndex = 3;
+            btn_BtnY.Text = "Y";
+            btn_BtnY.UseVisualStyleBackColor = true;
+            btn_BtnY.Click += ButtonEmuClick;
+            btn_BtnY.MouseDown += ButtonEmuDown;
+            btn_BtnY.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnX
+            // 
+            btn_BtnX.Location = new Point(6, 51);
+            btn_BtnX.Name = "btn_BtnX";
+            btn_BtnX.Size = new Size(80, 23);
+            btn_BtnX.TabIndex = 2;
+            btn_BtnX.Text = "X";
+            btn_BtnX.UseVisualStyleBackColor = true;
+            btn_BtnX.Click += ButtonEmuClick;
+            btn_BtnX.MouseDown += ButtonEmuDown;
+            btn_BtnX.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnB
+            // 
+            btn_BtnB.Location = new Point(92, 22);
+            btn_BtnB.Name = "btn_BtnB";
+            btn_BtnB.Size = new Size(80, 23);
+            btn_BtnB.TabIndex = 1;
+            btn_BtnB.Text = "B";
+            btn_BtnB.UseVisualStyleBackColor = true;
+            btn_BtnB.Click += ButtonEmuClick;
+            btn_BtnB.MouseDown += ButtonEmuDown;
+            btn_BtnB.MouseUp += ButtonEmuUp;
+            // 
+            // btn_BtnA
+            // 
+            btn_BtnA.Location = new Point(6, 22);
+            btn_BtnA.Name = "btn_BtnA";
+            btn_BtnA.Size = new Size(80, 23);
+            btn_BtnA.TabIndex = 0;
+            btn_BtnA.Text = "A";
+            btn_BtnA.UseVisualStyleBackColor = true;
+            btn_BtnA.Click += ButtonEmuClick;
+            btn_BtnA.MouseDown += ButtonEmuDown;
+            btn_BtnA.MouseUp += ButtonEmuUp;
+            // 
+            // gb_Analog
+            // 
+            gb_Analog.Controls.Add(btn_AnalogReset);
+            gb_Analog.Controls.Add(panel_AnalogPreview);
+            gb_Analog.Controls.Add(track_AnalogY);
+            gb_Analog.Controls.Add(track_AnalogX);
+            gb_Analog.Controls.Add(radio_Joystick);
+            gb_Analog.Controls.Add(radio_Touchpad);
+            gb_Analog.Location = new Point(599, 187);
+            gb_Analog.Name = "gb_Analog";
+            gb_Analog.Size = new Size(179, 216);
+            gb_Analog.TabIndex = 15;
+            gb_Analog.TabStop = false;
+            gb_Analog.Text = "Analog";
+            // 
+            // btn_AnalogReset
+            // 
+            btn_AnalogReset.Location = new Point(9, 52);
+            btn_AnalogReset.Name = "btn_AnalogReset";
+            btn_AnalogReset.Size = new Size(20, 23);
+            btn_AnalogReset.TabIndex = 13;
+            btn_AnalogReset.Text = "0";
+            btn_AnalogReset.UseVisualStyleBackColor = true;
+            btn_AnalogReset.Click += btn_AnalogReset_Click;
+            // 
+            // panel_AnalogPreview
+            // 
+            panel_AnalogPreview.BorderStyle = BorderStyle.Fixed3D;
+            panel_AnalogPreview.Controls.Add(pnl_AnalogPointer);
+            panel_AnalogPreview.Location = new Point(36, 77);
+            panel_AnalogPreview.Name = "panel_AnalogPreview";
+            panel_AnalogPreview.Size = new Size(136, 136);
+            panel_AnalogPreview.TabIndex = 12;
+            // 
+            // pnl_AnalogPointer
+            // 
+            pnl_AnalogPointer.BackColor = Color.Red;
+            pnl_AnalogPointer.Location = new Point(65, 65);
+            pnl_AnalogPointer.Name = "pnl_AnalogPointer";
+            pnl_AnalogPointer.Size = new Size(4, 4);
+            pnl_AnalogPointer.TabIndex = 0;
+            // 
+            // track_AnalogY
+            // 
+            track_AnalogY.Location = new Point(6, 77);
+            track_AnalogY.Maximum = 100;
+            track_AnalogY.Minimum = -100;
+            track_AnalogY.Name = "track_AnalogY";
+            track_AnalogY.Orientation = Orientation.Vertical;
+            track_AnalogY.Size = new Size(45, 136);
+            track_AnalogY.TabIndex = 11;
+            track_AnalogY.Scroll += track_AnalogY_Scroll;
+            // 
+            // track_AnalogX
+            // 
+            track_AnalogX.Location = new Point(36, 47);
+            track_AnalogX.Maximum = 100;
+            track_AnalogX.Minimum = -100;
+            track_AnalogX.Name = "track_AnalogX";
+            track_AnalogX.Size = new Size(136, 45);
+            track_AnalogX.TabIndex = 10;
+            track_AnalogX.Scroll += track_AnalogX_Scroll;
+            // 
+            // radio_Joystick
+            // 
+            radio_Joystick.AutoSize = true;
+            radio_Joystick.Location = new Point(92, 22);
+            radio_Joystick.Name = "radio_Joystick";
+            radio_Joystick.Size = new Size(66, 19);
+            radio_Joystick.TabIndex = 1;
+            radio_Joystick.TabStop = true;
+            radio_Joystick.Text = "Joystick";
+            radio_Joystick.UseVisualStyleBackColor = true;
+            // 
+            // radio_Touchpad
+            // 
+            radio_Touchpad.AutoSize = true;
+            radio_Touchpad.Location = new Point(9, 22);
+            radio_Touchpad.Name = "radio_Touchpad";
+            radio_Touchpad.Size = new Size(77, 19);
+            radio_Touchpad.TabIndex = 0;
+            radio_Touchpad.TabStop = true;
+            radio_Touchpad.Text = "Touchpad";
+            radio_Touchpad.UseVisualStyleBackColor = true;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(605, 445);
+            ClientSize = new Size(786, 445);
+            Controls.Add(gb_Analog);
+            Controls.Add(gb_Buttons);
             Controls.Add(gb_Position);
             Controls.Add(statusStrip1);
             Controls.Add(gb_Rotation);
@@ -404,6 +654,12 @@
             ((System.ComponentModel.ISupportInitialize)track_PosZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)track_PosY).EndInit();
             ((System.ComponentModel.ISupportInitialize)track_PosX).EndInit();
+            gb_Buttons.ResumeLayout(false);
+            gb_Analog.ResumeLayout(false);
+            gb_Analog.PerformLayout();
+            panel_AnalogPreview.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)track_AnalogY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)track_AnalogX).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -439,5 +695,24 @@
         private TrackBar track_PosZ;
         private TrackBar track_PosY;
         private TrackBar track_PosX;
+        private GroupBox gb_Buttons;
+        private Button btn_BtnA;
+        private Button btn_BtnSYSTEM;
+        private Button btn_BtnMENU;
+        private Button btn_BtnRIGHT;
+        private Button btn_BtnLEFT;
+        private Button btn_BtnDOWN;
+        private Button btn_BtnUP;
+        private Button btn_BtnY;
+        private Button btn_BtnX;
+        private Button btn_BtnB;
+        private GroupBox gb_Analog;
+        private TrackBar track_AnalogY;
+        private TrackBar track_AnalogX;
+        private RadioButton radio_Joystick;
+        private RadioButton radio_Touchpad;
+        private Button btn_AnalogReset;
+        private Panel panel_AnalogPreview;
+        private Panel pnl_AnalogPointer;
     }
 }

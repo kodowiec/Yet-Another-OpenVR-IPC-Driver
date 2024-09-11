@@ -10,7 +10,7 @@ namespace ControllerEmulator
 {
     internal class Ipc
     {
-        static NamedPipeClientStream namedPipeClient;
+        private NamedPipeClientStream namedPipeClient;
         private string _pipeName = "YAOIDvr";
         private int _bufferSize = 1024;
 
@@ -25,9 +25,7 @@ namespace ControllerEmulator
         }
         public bool Connect(bool fromSend = false)
         {
-            namedPipeClient = new NamedPipeClientStream(pipeName);
             if (!fromSend) Debug.WriteLine($"Connecting to {pipeName}...");
-            namedPipeClient.Connect();
             if (!fromSend) Send("bumpinthat", true);
             if (!fromSend) Debug.WriteLine("Connected!");
             if (!fromSend) Receive();
@@ -42,11 +40,14 @@ namespace ControllerEmulator
 
         public bool Send(string message, bool fromConnect = false)
         {
+            if (pipeName == null) return false;
             byte[] bytes = System.Text.Encoding.ASCII.GetBytes(message);
             try
             {
-                if (!fromConnect) this.Reconnect();
-                namedPipeClient!.Write(bytes, 0, bytes.Length);
+                namedPipeClient = new NamedPipeClientStream(pipeName);
+                namedPipeClient.Connect();
+                this.namedPipeClient.Write(bytes, 0, bytes.Length);
+                namedPipeClient.WaitForPipeDrain();
                 Debug.WriteLine($"sent: {message}");
                 return true;
             }
@@ -59,10 +60,12 @@ namespace ControllerEmulator
 
         public string Receive()
         {
+            if (namedPipeClient == null) throw new Exception("Pipe Name not specified");
             byte[] buffer = new byte[1024];
-            int byteFromClient = namedPipeClient!.Read(buffer, 0, 1024);
+            int byteFromClient = this.namedPipeClient.Read(buffer, 0, 1024);
             var str = System.Text.Encoding.Default.GetString(buffer);
-            Debug.WriteLine($"received: {str}");
+            Debug.Write($"received {byteFromClient} bytes");
+            Debug.WriteLine("");
             //namedPipeClient.Close();
             return str;
         }
