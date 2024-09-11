@@ -46,41 +46,41 @@ std::string YetAnotherDriver::ControllerDevice::GetSerial()
 
 long long counter = 0;
 
-void YetAnotherDriver::ControllerDevice::SetButton(YetAnotherDriver::ButtonEmu button, bool state)
+void YetAnotherDriver::ControllerDevice::SetButton(YetAnotherDriver::ControllerDevice::ButtonEmu button, bool state)
 {
     switch (button)
     {
-    case A:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::A:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, state, 0);
         break;
-    case B:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::B:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_click_component_, state, 0);
         break;
-    case X:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::X:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->x_button_click_component_, state, 0);
         break;
-    case Y:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::Y:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->y_button_click_component_, state, 0);
         break;
-    case UP:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::UP:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->up_button_click_component_, state, 0);
         break;
-    case DOWN:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::DOWN:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->down_button_click_component_, state, 0);
         break;
-    case LEFT:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::LEFT:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->left_button_click_component_, state, 0);
         break;
-    case RIGHT:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::RIGHT:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->right_button_click_component_, state, 0);
         break;
-    case GRIP:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::GRIP:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->grip_click_component_, state, 0);
         break;
-    case MENU:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::MENU:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->menu_click_component_, state, 0);
         break;
-    case SYSTEM:
+    case YetAnotherDriver::ControllerDevice::ButtonEmu::SYSTEM:
         GetDriver()->GetInput()->UpdateBooleanComponent(this->system_click_component_, state, 0);
         break;
     default:

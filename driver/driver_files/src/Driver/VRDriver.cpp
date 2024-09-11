@@ -97,7 +97,7 @@ void YetAnotherDriver::VRDriver::PipeThread()
 
                     if (idx < this->controllers_.size())
                     {
-                        this->controllers_[idx]->SetButton((ButtonEmu)button, state);
+                        this->controllers_[idx]->SetButton((YetAnotherDriver::ControllerDevice::ButtonEmu)button, state);
                         s = s + " updated";
                     }
                     else

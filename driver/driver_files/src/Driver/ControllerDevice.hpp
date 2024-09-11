@@ -12,6 +12,20 @@ namespace YetAnotherDriver {
     class ControllerDevice : public IVRDevice {
         public:
 
+            enum class ButtonEmu {
+                A,
+                B,
+                X,
+                Y,
+                UP,
+                DOWN,
+                LEFT,
+                RIGHT,
+                GRIP,
+                MENU,
+                SYSTEM
+            };
+
             enum class Handedness {
                 LEFT,
                 RIGHT,
@@ -30,7 +44,7 @@ namespace YetAnotherDriver {
 
             void SetPose(double px, double py, double pz, double qw, double qx, double qy, double qz);
             void SetDirection(float x, float y, float rx, float ry);
-            void SetButton(ButtonEmu button, bool state);
+            void SetButton(YetAnotherDriver::ControllerDevice::ButtonEmu button, bool state);
 
             virtual vr::EVRInitError Activate(uint32_t unObjectId) override;
             virtual void Deactivate() override;
@@ -106,19 +120,5 @@ namespace YetAnotherDriver {
 
         //vr::VRInputComponentHandle_t skeleton_left_component_ = 0;
         //vr::VRInputComponentHandle_t skeleton_right_component_ = 0;
-    };
-
-    enum ButtonEmu {
-        A,
-        B,
-        X,
-        Y,
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
-        GRIP,
-        MENU,
-        SYSTEM
     };
 };
