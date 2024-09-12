@@ -88,6 +88,27 @@ void YetAnotherDriver::ControllerDevice::SetButton(YetAnotherDriver::ControllerD
     }
 }
 
+void YetAnotherDriver::ControllerDevice::SetState(double px, double py, double pz, double qw, double qx, double qy, double qz, float jx, float jy, bool jd, float tx, float ty, bool td, float trig, bool a, bool b, bool x, bool y, bool m, bool sys, bool grip)
+{
+    SetPose(px, py, pz, qw, qx, qy, qz);
+    SetDirection(jx, jy, tx, ty);
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, a, 0);
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->b_button_click_component_, b, 0);
+    
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->x_button_click_component_, x, 0);
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->y_button_click_component_, y, 0);
+
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->trackpad_click_component_, td, 0);
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->joystick_click_component_, jd, 0);
+
+    GetDriver()->GetInput()->UpdateScalarComponent(this->trigger_value_component_, trig, 0);
+    
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->grip_click_component_, grip, 0);
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->menu_click_component_, m, 0);
+    GetDriver()->GetInput()->UpdateBooleanComponent(this->system_click_component_, sys, 0);
+    this->Update();
+}
+
 void YetAnotherDriver::ControllerDevice::SetDirection(float x, float y, float rx, float ry)
 {
     if (x == 0.0f && y == 0.0f)

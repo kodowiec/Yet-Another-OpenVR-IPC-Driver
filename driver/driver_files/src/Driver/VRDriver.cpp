@@ -121,6 +121,27 @@ void YetAnotherDriver::VRDriver::PipeThread()
                         s = s + " idinvalid";
                     }
                 }
+                else if (word == "cstate")
+                {
+                    int idx;
+                    double px, py, pz, qw, qx, qy, qz;                                    // positional info
+                    float jx; float jy; bool jd; float tx; float ty; bool td; float trig; // joystick; touchpad; trigger
+                    bool a; bool b; bool x; bool y; bool m; bool sys; bool grip;          // click buttons
+                    iss >> idx;
+                    iss >> px; iss >> py; iss >> pz; iss >> qw; iss >> qx; iss >> qy; iss >> qz;
+                    iss >> jx; iss >> jy; iss >> jd; iss >> tx; iss >> ty; iss >> td; iss >> trig;
+                    iss >> a; iss >> b; iss >> x; iss >> y; iss >> m; iss >> sys; iss >> grip;
+
+                    if (idx < this->controllers_.size())
+                    {
+                        this->controllers_[idx]->SetState(px, py, pz, qw, qx, qy, qz, jx, jy, jd, tx, ty, td, trig, a, b, x, y, m, sys, grip);
+                        s = s + " updated";
+                    }
+                    else
+                    {
+                        s = s + " idinvalid";
+                    }
+                }
                 else if (word == "cfixedpose")
                 {
                     int idx;

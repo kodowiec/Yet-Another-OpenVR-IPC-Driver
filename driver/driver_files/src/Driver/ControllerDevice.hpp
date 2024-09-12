@@ -45,6 +45,7 @@ namespace YetAnotherDriver {
             void SetPose(double px, double py, double pz, double qw, double qx, double qy, double qz);
             void SetDirection(float x, float y, float rx, float ry);
             void SetButton(YetAnotherDriver::ControllerDevice::ButtonEmu button, bool state);
+            void SetState(double px, double py, double pz, double qw, double qx, double qy, double qz, float jx, float jy, bool jd, float tx, float ty, bool td, float trig, bool a, bool b, bool x, bool y, bool m, bool sys, bool grip);
 
             virtual vr::EVRInitError Activate(uint32_t unObjectId) override;
             virtual void Deactivate() override;
